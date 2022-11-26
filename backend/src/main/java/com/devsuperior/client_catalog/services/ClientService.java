@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.devsuperior.client_catalog.entities.Client;
 import com.devsuperior.client_catalog.repositories.ClientRepository;
@@ -16,8 +17,8 @@ public class ClientService implements Serializable {
 	@Autowired
 	private ClientRepository repository;
 	
+	@Transactional(readOnly = true)
 	public List<Client> findAll(){
-		
 		return repository.findAll();
 	}
 
