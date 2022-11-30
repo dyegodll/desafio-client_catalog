@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.devsuperior.client_catalog.dto.ClientDTO;
 import com.devsuperior.client_catalog.entities.Client;
 import com.devsuperior.client_catalog.repositories.ClientRepository;
+import com.devsuperior.client_catalog.services.exceptions.EntityNotFoundException;
 
 @Service
 public class ClientService implements Serializable {
@@ -29,7 +30,19 @@ public class ClientService implements Serializable {
 	@Transactional(readOnly = true)
 	public ClientDTO findById(Long id) {
 		Optional<Client> obj = repository.findById(id);
-		Client entity = obj.get();
+		Client entity = obj.orElseThrow( () -> new EntityNotFoundException("Entity Not Found!") );
+		return new ClientDTO(entity);
+	}
+
+	@Transactional
+	public ClientDTO insert(ClientDTO dto) {
+		Client entity = new Client();
+		entity.setName(dto.getName());
+		entity.setCpf(dto.getCpf());
+		entity.setIncome(dto.getIncome());
+		entity.setBirthDate(dto.getBirthDate());
+		entity.setChildren(dto.getChildren());
+		entity = repository.save(entity);
 		return new ClientDTO(entity);
 	}
 
