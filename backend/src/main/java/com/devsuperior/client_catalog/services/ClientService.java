@@ -8,12 +8,15 @@ import java.util.stream.Collectors;
 import javax.persistence.EntityNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.devsuperior.client_catalog.dto.ClientDTO;
 import com.devsuperior.client_catalog.entities.Client;
 import com.devsuperior.client_catalog.repositories.ClientRepository;
+import com.devsuperior.client_catalog.services.exceptions.DataBaseException;
 import com.devsuperior.client_catalog.services.exceptions.ResourceNotFoundException;
 
 @Service
@@ -61,6 +64,16 @@ public class ClientService implements Serializable {
 			return new ClientDTO(entity);
 		} catch (EntityNotFoundException e) {
 			throw new ResourceNotFoundException("ID "+id+" Not Found!");
+		}
+	}
+
+	public void delete(Long id) {
+		 try {
+			 repository.deleteById(id);
+		} catch (EmptyResultDataAccessException e) {
+			throw new ResourceNotFoundException("ID "+id+" Not Found!");
+		} catch (DataIntegrityViolationException e) {
+			throw new DataBaseException("Integrity Violation!");
 		}
 	}
 
